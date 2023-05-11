@@ -1,17 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+// import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TenderModule } from './tender/tender.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
-    MongooseModule.forRoot(process.env.DB_URI),
+    MongooseModule.forRoot('mongodb://localhost:27017/tendersDB'),
     TenderModule,
   ],
   controllers: [AppController],

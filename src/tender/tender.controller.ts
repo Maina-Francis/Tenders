@@ -7,7 +7,7 @@ export class TenderController {
 
   //   Get all open tenders filtered by provided keywords
   @Get()
-  getTenders(): Promise<any> {
+  getTenders(): Promise<string> {
     return this.appService.getTenders();
   }
 }
