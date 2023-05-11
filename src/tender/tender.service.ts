@@ -11,7 +11,7 @@ import { Cron } from '@nestjs/schedule';
 export class TenderService {
   constructor(
     @InjectModel(Tender.name) private tenderModel: mongoose.Model<Tender>,
-    @InjectModel('newTender') private newTenderModel: mongoose.Model<Tender>,
+    @InjectModel('newTenders') private newTenderModel: mongoose.Model<Tender>,
     private httpService: HttpService,
   ) {}
 
@@ -52,6 +52,9 @@ export class TenderService {
   }
 
   async getNewTenders() {
+    if (!this.newTenderModel.find()) {
+      return 'No new tenders available';
+    }
     return await this.newTenderModel.find();
   }
 }
