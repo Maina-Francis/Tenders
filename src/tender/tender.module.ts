@@ -13,6 +13,10 @@ import { Tender, TenderSchema } from './schemas/tender.schema';
         name: Tender.name,
         schema: TenderSchema,
       },
+      {
+        name: 'newTenders',
+        schema: TenderSchema,
+      },
     ]),
   ],
   controllers: [TenderController],

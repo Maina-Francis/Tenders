@@ -7,7 +7,12 @@ export class TenderController {
 
   //   Get all open tenders filtered by provided keywords
   @Get()
-  getTenders(): Promise<string> {
-    return this.appService.getTenders();
+  async getTenders(): Promise<string> {
+    return await this.appService.getTenders();
+  }
+
+  @Get('new')
+  async getNewTenders() {
+    return await this.appService.getNewTenders();
   }
 }

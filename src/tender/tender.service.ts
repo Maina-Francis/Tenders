@@ -11,12 +11,17 @@ import { Cron } from '@nestjs/schedule';
 export class TenderService {
   constructor(
     @InjectModel(Tender.name) private tenderModel: mongoose.Model<Tender>,
+    @InjectModel('newTender') private newTenderModel: mongoose.Model<Tender>,
     private httpService: HttpService,
   ) {}
 
   //   Get all open tenders filtered by keywords
   @Cron('0 0 1 * * 1-6') // Schedule to fetch all new open tenders monday - saturday @1am
   async getTenders(): Promise<string> {
+    // Delete everything in the newTenders collection
+    await this.newTenderModel.deleteMany({});
+
+    // Fetch data from the GOK tender api
     const url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
     const { data } = await firstValueFrom(this.httpService.get(url));
 
@@ -37,10 +42,16 @@ export class TenderService {
         id_tenderdetails: filteredData[i].id_tenderdetails,
       });
 
-      if (checkFromDb.length == 0)
+      if (checkFromDb.length == 0) {
         await this.tenderModel.create(filteredData[i]);
+        await this.newTenderModel.create(filteredData[i]);
+      }
     }
 
     return 'Successfully updated the tender data';
+  }
+
+  async getNewTenders() {
+    return await this.newTenderModel.find();
   }
 }
