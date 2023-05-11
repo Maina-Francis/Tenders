@@ -5,6 +5,7 @@ import { keywords } from './filters/filter.keywords';
 import * as mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Tender } from './schemas/tender.schema';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class TenderService {
@@ -14,6 +15,7 @@ export class TenderService {
   ) {}
 
   //   Get all open tenders filtered by keywords
+  @Cron('0 0 1 * * 1-6') // Schedule to fetch all new open tenders monday - saturday @1am
   async getTenders(): Promise<string> {
     const url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
     const { data } = await firstValueFrom(this.httpService.get(url));
