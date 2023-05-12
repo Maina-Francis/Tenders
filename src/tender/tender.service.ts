@@ -6,6 +6,7 @@ import * as mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Tender } from './schemas/tender.schema';
 import { Cron } from '@nestjs/schedule';
+import { TodoService } from './microsoft to-do graph api/todo.service';
 
 @Injectable()
 export class TenderService {
@@ -13,6 +14,7 @@ export class TenderService {
     @InjectModel(Tender.name) private tenderModel: mongoose.Model<Tender>,
     @InjectModel('newTenders') private newTenderModel: mongoose.Model<Tender>,
     private httpService: HttpService,
+    private todoService: TodoService,
   ) {}
 
   //   Get all open tenders filtered by keywords
@@ -55,6 +57,12 @@ export class TenderService {
     if ((await this.newTenderModel.find()).length === 0) {
       return 'No new tenders available';
     }
-    return await this.newTenderModel.find();
+
+    await this.newTenderModel.find().exec();
+    // console.log(result);
+    this.todoService.createTodoListFromCollection();
+    return 'New tenders added to the collection';
+
+    // && this.todoService.createTodoListFromCollection('result')
   }
 }

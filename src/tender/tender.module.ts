@@ -4,6 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 import { TenderService } from './tender.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Tender, TenderSchema } from './schemas/tender.schema';
+import { TodoService } from './microsoft to-do graph api/todo.service';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { Tender, TenderSchema } from './schemas/tender.schema';
     ]),
   ],
   controllers: [TenderController],
-  providers: [TenderService],
+  providers: [TenderService, TodoService],
 })
 export class TenderModule {}
