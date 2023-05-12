@@ -52,7 +52,7 @@ export class TenderService {
   }
 
   async getNewTenders() {
-    if (!this.newTenderModel.find()) {
+    if ((await this.newTenderModel.find()).length === 0) {
       return 'No new tenders available';
     }
     return await this.newTenderModel.find();

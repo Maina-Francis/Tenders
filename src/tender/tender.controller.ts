@@ -11,6 +11,7 @@ export class TenderController {
     return await this.appService.getTenders();
   }
 
+  // Get all new tenders, updated everyday
   @Get('new')
   async getNewTenders() {
     return await this.appService.getNewTenders();
