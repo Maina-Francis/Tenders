@@ -8,7 +8,10 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: ['.env'], // path to the environment variable file
+      isGlobal: true,
+    }),
     ScheduleModule.forRoot(),
     MongooseModule.forRoot('mongodb://localhost:27017/tendersDB'),
     TenderModule,
