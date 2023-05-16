@@ -43,36 +43,45 @@ export class TodoService {
     };
     console.log('Breakpoint 3');
 
-    const list = await this.graphClient
-      .api(`/users/{process.env.user_id}/todo/lists`)
-      .post({ displayName: `Tenders to Watchout For`, ...options });
+    const listEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists`;
 
-    console.log('Breakpoint 4');
+    const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
 
-    const createdTodos = await Promise.all(
-      todos.map((todo) =>
-        this.graphClient
-          .api(
-            `/users/{process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`,
-          )
-          .post({
+    try {
+      console.log('Creating list...');
+      const list = await this.graphClient.api(listEndpoint).post({
+        displayName: 'Tenders to Watchout For',
+        ...options,
+      });
+      console.log('List created:', list);
+
+      console.log('Creating tasks...');
+      const createdTodos = await Promise.all(
+        todos.map(async (todo) => {
+          const task = await this.graphClient.api(tasksEndpoint).post({
             title: todo.title,
             body: {
-              content: `Procuring Entity : ${todo.pename},
-              Procurement Method : ${todo.procurementmethod},
-              Submission Method : ${todo.submissionmethod},
-              Closing Date : ${todo.closedate},
-              Financial Year : ${todo.financialyr},
-              Addendum Added : ${todo.addendumadded},
-              Link To Tender : https://tenders.go.ke/OneTender/${todo.id_tenderdetails} `,
+              content: `Procuring Entity: ${todo.pename}
+              Procurement Method: ${todo.procurementmethod}
+              Submission Method: ${todo.submissionmethod}
+              Closing Date: ${todo.closedate}
+              Financial Year: ${todo.financialyr}
+              Addendum Added: ${todo.addendumadded}
+              Link To Tender: https://tenders.go.ke/OneTender/${todo.id_tenderdetails}`,
               contentType: 'text',
-              ...options,
             },
-          }),
-      ),
-    );
+            ...options,
+          });
+          console.log('Task created:', task);
+          return task;
+        }),
+      );
 
-    console.log('end of the todo service');
-    return { list, todos: createdTodos };
+      console.log('End of the todo service');
+      return { list, todos: createdTodos };
+    } catch (error) {
+      console.error('An error occurred:', error);
+      throw error;
+    }
   }
 }
