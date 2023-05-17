@@ -26,7 +26,9 @@ export class TodoService {
   private async getAccessToken(): Promise<string> {
     // TODO: Implement code to obtain access token from .env file
     console.log('Breakpoint 1');
+
     return process.env.accessToken;
+    // return accessToken;
   }
 
   @Cron('0 0 7 * * 1-6') // Schedule to update To-Do list with all new open tenders monday - saturday @7am
