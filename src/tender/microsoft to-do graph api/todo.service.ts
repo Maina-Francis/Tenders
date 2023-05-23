@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { Tender } from '../schemas/tender.schema';
 import { Cron } from '@nestjs/schedule';
 import { AxiosRequestConfig } from 'axios';
+import { AuthProviderCallback } from '@microsoft/microsoft-graph-client';
 
 @Injectable()
 export class TodoService {
@@ -16,50 +17,71 @@ export class TodoService {
     @InjectModel('newTenders') private readonly todoModel: Model<Tender>,
   ) {
     this.graphClient = Client.init({
-      authProvider: async (done) => {
-        const token = await this.getAccessToken();
-        done(null, token);
+      authProvider: (done: AuthProviderCallback) => {
+        this.getAccessToken()
+          .then((token) => done(null, token))
+          .catch((error) => done(error, null));
       },
     });
   }
 
   private async getAccessToken(): Promise<string> {
-    // TODO: Implement code to obtain access token from .env file
-    console.log('Breakpoint 1');
+    const requestBody = `client_id=${encodeURIComponent(
+      process.env.client_id,
+    )}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=${encodeURIComponent(
+      process.env.TenderSecret,
+    )}&grant_type=client_credentials`;
 
-    return process.env.accessToken;
-    // return accessToken;
+    try {
+      const response = await this.httpService
+        .post(
+          `https://login.microsoftonline.com/${process.env.tenant_id}/oauth2/v2.0/token`,
+          requestBody,
+          {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          },
+        )
+        .toPromise();
+
+      const accessToken = response.data.access_token;
+
+      // console.log('Access Token ', accessToken);
+
+      return accessToken;
+    } catch (error) {
+      console.error('Error fetching access token:', error);
+      throw error;
+    }
   }
 
   @Cron('0 0 7 * * 1-6') // Schedule to update To-Do list with all new open tenders monday - saturday @7am
   async createTodoListFromCollection() {
     const todos = await this.todoModel.find({}).exec();
     const accessToken = await this.getAccessToken();
-    // console.log(todos);
-    console.log('Breakpoint 2');
+    console.log(accessToken);
 
     const options: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
-    console.log('Breakpoint 3');
+    // console.log('Breakpoint 3');
 
     const listEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists`;
 
     // const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
 
     try {
-      console.log('Creating list...');
+      // console.log('Creating list...');
       const list = await this.graphClient.api(listEndpoint).post({
         displayName: 'Tenders to Watchout For',
         ...options,
       });
-      console.log('List created:', list);
+      // console.log('List created:', list);
 
       const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${list.id}/tasks`;
 
-      console.log('Creating tasks...');
+      // console.log('Creating tasks...');
 
       const createdTodos = await Promise.all(
         todos.map(async (todo) => {
@@ -77,7 +99,7 @@ export class TodoService {
             },
             ...options,
           });
-          console.log('Task created:', task);
+          // console.log('Task created:', task);
           return task;
         }),
       );
