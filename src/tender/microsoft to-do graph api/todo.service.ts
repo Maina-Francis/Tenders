@@ -47,7 +47,7 @@ export class TodoService {
 
     const listEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists`;
 
-    const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
+    // const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
 
     try {
       console.log('Creating list...');
@@ -57,7 +57,10 @@ export class TodoService {
       });
       console.log('List created:', list);
 
+      const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${list.id}/tasks`;
+
       console.log('Creating tasks...');
+
       const createdTodos = await Promise.all(
         todos.map(async (todo) => {
           const task = await this.graphClient.api(tasksEndpoint).post({
