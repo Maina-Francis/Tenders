@@ -27,17 +27,23 @@ export class TenderService {
     const url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
     const { data } = await firstValueFrom(this.httpService.get(url));
 
-    const newData = [];
+    // const newData = [];
 
     // Filter data by keywords
-    let filteredData: Tender[] = [];
-    for (let i = 0; i < keywords.length; i++) {
-      filteredData = data.filter((tender) =>
-        tender.title.toLowerCase().includes(keywords[i]),
+    const filteredData: Tender[] = [];
+    // console.log(keywords);
+    for (const tender of data) {
+      const tenderTitle = tender.title.toLowerCase();
+      // check whether the title includes the keywords
+      const hasKeyword = keywords.some((keyword) =>
+        tenderTitle.includes(keyword),
       );
-      newData.push(filteredData);
+      if (hasKeyword) {
+        filteredData.push(tender);
+      }
     }
 
+    // console.log(filteredData);
     // Check if the data already exists, then add it to the db if it doesn't
     for (let i = 0; i < filteredData.length; i++) {
       const checkFromDb = await this.tenderModel.find({
@@ -54,15 +60,13 @@ export class TenderService {
   }
 
   async getNewTenders() {
-    if ((await this.newTenderModel.find()).length === 0) {
+    const newTenders = await this.newTenderModel.find().exec();
+    if (newTenders.length === 0) {
       return 'No new tenders available';
     }
 
-    await this.newTenderModel.find().exec();
-    // console.log(result);
-    this.todoService.createTodoListFromCollection();
-    return 'New tenders added to the collection';
+    await this.todoService.createTodoListFromCollection();
 
-    // && this.todoService.createTodoListFromCollection('result')
+    return 'New tenders added to the collection';
   }
 }
