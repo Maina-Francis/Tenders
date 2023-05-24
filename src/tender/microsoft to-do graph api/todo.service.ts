@@ -4,7 +4,6 @@ import { Client } from '@microsoft/microsoft-graph-client';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Tender } from '../schemas/tender.schema';
-import { Cron } from '@nestjs/schedule';
 import { AxiosRequestConfig } from 'axios';
 import { AuthProviderCallback } from '@microsoft/microsoft-graph-client';
 
@@ -25,6 +24,7 @@ export class TodoService {
     });
   }
 
+  // Retrieve access token using client credentials
   private async getAccessToken(): Promise<string> {
     const requestBody = `client_id=${encodeURIComponent(
       process.env.client_id,
@@ -54,11 +54,10 @@ export class TodoService {
     }
   }
 
-  @Cron('0 0 7 * * 1-6') // Schedule to update To-Do list with all new open tenders monday - saturday @7am
   async createTodoListFromCollection() {
     const todos = await this.todoModel.find({}).exec();
     const accessToken = await this.getAccessToken();
-    console.log(accessToken);
+    // console.log(accessToken);
 
     const options: AxiosRequestConfig = {
       headers: {
@@ -72,7 +71,7 @@ export class TodoService {
     // const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
 
     try {
-      // console.log('Creating list...');
+      //create a new task list
       const list = await this.graphClient.api(listEndpoint).post({
         displayName: 'Tenders to Watchout For',
         ...options,
@@ -85,6 +84,7 @@ export class TodoService {
 
       const createdTodos = await Promise.all(
         todos.map(async (todo) => {
+          // Create a task for each todo item
           const task = await this.graphClient.api(tasksEndpoint).post({
             title: todo.title,
             body: {
