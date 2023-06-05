@@ -18,7 +18,7 @@ export class TenderService {
   ) {}
 
   //   Get all open tenders filtered by keywords
-  @Cron('0 0 5/24 ? * * *') //runs every day @5am
+  @Cron('0 5 * * *') //runs every day @5am
   async getTenders(): Promise<string> {
     // Delete everything in the newTenders collection
     await this.newTenderModel.deleteMany({});
@@ -59,7 +59,7 @@ export class TenderService {
     return 'Successfully updated the tender data';
   }
 
-  @Cron('0 0 6/24 ? * * *') //runs every day @6am
+  @Cron('0 6 * * *') //runs every day @6am
   async getNewTenders() {
     const newTenders = await this.newTenderModel.find().exec();
     if (newTenders.length === 0) {
