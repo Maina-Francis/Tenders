@@ -99,7 +99,7 @@ export class TodoService {
             },
             ...options,
           });
-          // console.log('Task created:', task);
+          console.log('Task created:', task);
           return task;
         }),
       );
