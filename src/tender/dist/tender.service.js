@@ -136,10 +136,10 @@ var TenderService = /** @class */ (function () {
         });
     };
     __decorate([
-        schedule_1.Cron('5 * * * * *') //runs every day @5am
+        schedule_1.Cron('0 0 6 * * *') //runs every day @6am
     ], TenderService.prototype, "getTenders");
     __decorate([
-        schedule_1.Cron('15 * * * * *')
+        schedule_1.Cron('0 15 6 * * *') //everyday @6:15am
     ], TenderService.prototype, "getNewTenders");
     TenderService = __decorate([
         common_1.Injectable(),
