@@ -99,15 +99,15 @@ export class TodoService {
             },
             ...options,
           });
-          console.log('Task created:', task);
+          // console.log('Task created:', task);
           return task;
         }),
       );
 
-      console.log('End of the todo service');
+      // console.log('End of the todo service');
       return { list, todos: createdTodos };
     } catch (error) {
-      console.error('An error occurred:', error);
+      // console.error('An error occurred:', error);
       throw error;
     }
   }

@@ -137,18 +137,18 @@ var TodoService = /** @class */ (function () {
                                                 } }, options))];
                                         case 1:
                                             task = _a.sent();
-                                            console.log('Task created:', task);
+                                            // console.log('Task created:', task);
                                             return [2 /*return*/, task];
                                     }
                                 });
                             }); }))];
                     case 5:
                         createdTodos = _a.sent();
-                        console.log('End of the todo service');
+                        // console.log('End of the todo service');
                         return [2 /*return*/, { list: list, todos: createdTodos }];
                     case 6:
                         error_2 = _a.sent();
-                        console.error('An error occurred:', error_2);
+                        // console.error('An error occurred:', error);
                         throw error_2;
                     case 7: return [2 /*return*/];
                 }
