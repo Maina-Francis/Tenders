@@ -21,7 +21,7 @@ export class TenderService {
   @Cron('0 0 6 * * *') //runs every day @6am
   async getTenders(): Promise<string> {
     // Delete everything in the newTenders collection
-    await this.newTenderModel.deleteMany({});
+    // await this.newTenderModel.deleteMany({});
 
     // Fetch data from the GOK tender api
     const url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
@@ -56,18 +56,21 @@ export class TenderService {
       }
     }
 
+    console.log('Successfully updated the tender data');
+
     return 'Successfully updated the tender data';
   }
-
   @Cron('0 15 6 * * *') //everyday @6:15am
   async getNewTenders() {
     const newTenders = await this.newTenderModel.find().exec();
     if (newTenders.length === 0) {
+      console.log('No new Tenders found');
       return 'No new tenders available';
     }
 
     await this.todoService.createTodoListFromCollection();
 
+    console.log('Inside new tenders');
     return 'New tenders added to the collection';
   }
 }

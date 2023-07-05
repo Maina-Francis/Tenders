@@ -65,15 +65,10 @@ var TenderService = /** @class */ (function () {
             var url, data, filteredData, _loop_1, _i, data_1, tender, i, checkFromDb;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: 
-                    // Delete everything in the newTenders collection
-                    return [4 /*yield*/, this.newTenderModel.deleteMany({})];
-                    case 1:
-                        // Delete everything in the newTenders collection
-                        _a.sent();
+                    case 0:
                         url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
                         return [4 /*yield*/, rxjs_1.firstValueFrom(this.httpService.get(url))];
-                    case 2:
+                    case 1:
                         data = (_a.sent()).data;
                         filteredData = [];
                         _loop_1 = function (tender) {
@@ -92,26 +87,28 @@ var TenderService = /** @class */ (function () {
                             _loop_1(tender);
                         }
                         i = 0;
-                        _a.label = 3;
-                    case 3:
-                        if (!(i < filteredData.length)) return [3 /*break*/, 8];
+                        _a.label = 2;
+                    case 2:
+                        if (!(i < filteredData.length)) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.tenderModel.find({
                                 id_tenderdetails: filteredData[i].id_tenderdetails
                             })];
-                    case 4:
+                    case 3:
                         checkFromDb = _a.sent();
-                        if (!(checkFromDb.length == 0)) return [3 /*break*/, 7];
+                        if (!(checkFromDb.length == 0)) return [3 /*break*/, 6];
                         return [4 /*yield*/, this.tenderModel.create(filteredData[i])];
-                    case 5:
+                    case 4:
                         _a.sent();
                         return [4 /*yield*/, this.newTenderModel.create(filteredData[i])];
-                    case 6:
+                    case 5:
                         _a.sent();
-                        _a.label = 7;
-                    case 7:
+                        _a.label = 6;
+                    case 6:
                         i++;
-                        return [3 /*break*/, 3];
-                    case 8: return [2 /*return*/, 'Successfully updated the tender data'];
+                        return [3 /*break*/, 2];
+                    case 7:
+                        console.log('Successfully updated the tender data');
+                        return [2 /*return*/, 'Successfully updated the tender data'];
                 }
             });
         });
@@ -125,11 +122,13 @@ var TenderService = /** @class */ (function () {
                     case 1:
                         newTenders = _a.sent();
                         if (newTenders.length === 0) {
+                            console.log('No new Tenders found');
                             return [2 /*return*/, 'No new tenders available'];
                         }
                         return [4 /*yield*/, this.todoService.createTodoListFromCollection()];
                     case 2:
                         _a.sent();
+                        console.log('Inside new tenders');
                         return [2 /*return*/, 'New tenders added to the collection'];
                 }
             });

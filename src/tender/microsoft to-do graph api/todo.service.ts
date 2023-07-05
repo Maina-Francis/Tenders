@@ -10,6 +10,7 @@ import { AuthProviderCallback } from '@microsoft/microsoft-graph-client';
 @Injectable()
 export class TodoService {
   private graphClient: Client;
+  private taskListId: string; // Added taskListId property
 
   constructor(
     private readonly httpService: HttpService,
@@ -22,6 +23,8 @@ export class TodoService {
           .catch((error) => done(error, null));
       },
     });
+    //Create the task list when the service is initialized
+    this.createTaskList();
   }
 
   // Retrieve access token using client credentials
@@ -54,37 +57,55 @@ export class TodoService {
     }
   }
 
-  async createTodoListFromCollection() {
-    const todos = await this.todoModel.find({}).exec();
+  private async createTaskList() {
     const accessToken = await this.getAccessToken();
-    // console.log(accessToken);
-
     const options: AxiosRequestConfig = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
-    // console.log('Breakpoint 3');
 
     const listEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists`;
 
-    // const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${process.env.taskListId}/tasks`;
-
     try {
-      //create a new task list
+      // Check if the task list already exists
+      const existingLists = await this.graphClient.api(listEndpoint).get();
+      const tenderList = existingLists.value.find(
+        (list) => list.displayName === 'New Tenders',
+      );
+
+      if (tenderList) {
+        this.taskListId = tenderList.id;
+        return;
+      }
+
+      // Create the task list if it doesn't exist
       const list = await this.graphClient.api(listEndpoint).post({
-        displayName: 'Tenders to Watchout For',
+        displayName: 'New Tenders',
         ...options,
       });
-      // console.log('List created:', list);
 
-      const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${list.id}/tasks`;
+      this.taskListId = list.id;
+    } catch (error) {
+      console.error('Error creating task list:', error);
+      throw error;
+    }
+  }
 
-      // console.log('Creating tasks...');
+  async createTodoListFromCollection() {
+    const todos = await this.todoModel.find({}).exec();
+    const accessToken = await this.getAccessToken();
+    const options: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
 
+    const tasksEndpoint = `https://graph.microsoft.com/v1.0/users/${process.env.user_id}/todo/lists/${this.taskListId}/tasks`;
+
+    try {
       const createdTodos = await Promise.all(
         todos.map(async (todo) => {
-          // Create a task for each todo item
           const task = await this.graphClient.api(tasksEndpoint).post({
             title: todo.title,
             body: {
@@ -99,15 +120,14 @@ export class TodoService {
             },
             ...options,
           });
-          // console.log('Task created:', task);
+
           return task;
         }),
       );
 
-      // console.log('End of the todo service');
-      return { list, todos: createdTodos };
+      return { todos: createdTodos };
     } catch (error) {
-      // console.error('An error occurred:', error);
+      console.error('An error occurred:', error);
       throw error;
     }
   }

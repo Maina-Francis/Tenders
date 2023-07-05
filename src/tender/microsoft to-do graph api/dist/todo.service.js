@@ -71,6 +71,8 @@ var TodoService = /** @class */ (function () {
                     .then(function (token) { return done(null, token); })["catch"](function (error) { return done(error, null); });
             }
         });
+        //Create the task list when the service is initialized
+        this.createTaskList();
     }
     // Retrieve access token using client credentials
     TodoService.prototype.getAccessToken = function () {
@@ -102,9 +104,48 @@ var TodoService = /** @class */ (function () {
             });
         });
     };
+    TodoService.prototype.createTaskList = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var accessToken, options, listEndpoint, existingLists, tenderList, list, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getAccessToken()];
+                    case 1:
+                        accessToken = _a.sent();
+                        options = {
+                            headers: {
+                                Authorization: "Bearer " + accessToken
+                            }
+                        };
+                        listEndpoint = "https://graph.microsoft.com/v1.0/users/" + process.env.user_id + "/todo/lists";
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 5, , 6]);
+                        return [4 /*yield*/, this.graphClient.api(listEndpoint).get()];
+                    case 3:
+                        existingLists = _a.sent();
+                        tenderList = existingLists.value.find(function (list) { return list.displayName === 'New Tenders'; });
+                        if (tenderList) {
+                            this.taskListId = tenderList.id;
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, this.graphClient.api(listEndpoint).post(__assign({ displayName: 'New Tenders' }, options))];
+                    case 4:
+                        list = _a.sent();
+                        this.taskListId = list.id;
+                        return [3 /*break*/, 6];
+                    case 5:
+                        error_2 = _a.sent();
+                        console.error('Error creating task list:', error_2);
+                        throw error_2;
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
     TodoService.prototype.createTodoListFromCollection = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var todos, accessToken, options, listEndpoint, list, tasksEndpoint_1, createdTodos, error_2;
+            var todos, accessToken, options, tasksEndpoint, createdTodos, error_3;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -119,38 +160,32 @@ var TodoService = /** @class */ (function () {
                                 Authorization: "Bearer " + accessToken
                             }
                         };
-                        listEndpoint = "https://graph.microsoft.com/v1.0/users/" + process.env.user_id + "/todo/lists";
+                        tasksEndpoint = "https://graph.microsoft.com/v1.0/users/" + process.env.user_id + "/todo/lists/" + this.taskListId + "/tasks";
                         _a.label = 3;
                     case 3:
-                        _a.trys.push([3, 6, , 7]);
-                        return [4 /*yield*/, this.graphClient.api(listEndpoint).post(__assign({ displayName: 'Tenders to Watchout For' }, options))];
-                    case 4:
-                        list = _a.sent();
-                        tasksEndpoint_1 = "https://graph.microsoft.com/v1.0/users/" + process.env.user_id + "/todo/lists/" + list.id + "/tasks";
+                        _a.trys.push([3, 5, , 6]);
                         return [4 /*yield*/, Promise.all(todos.map(function (todo) { return __awaiter(_this, void 0, void 0, function () {
                                 var task;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, this.graphClient.api(tasksEndpoint_1).post(__assign({ title: todo.title, body: {
+                                        case 0: return [4 /*yield*/, this.graphClient.api(tasksEndpoint).post(__assign({ title: todo.title, body: {
                                                     content: "Procuring Entity: " + todo.pename + "\n              Procurement Method: " + todo.procurementmethod + "\n              Submission Method: " + todo.submissionmethod + "\n              Closing Date: " + todo.closedate + "\n              Financial Year: " + todo.financialyr + "\n              Addendum Added: " + todo.addendumadded + "\n              Link To Tender: https://tenders.go.ke/OneTender/" + todo.id_tenderdetails,
                                                     contentType: 'text'
                                                 } }, options))];
                                         case 1:
                                             task = _a.sent();
-                                            // console.log('Task created:', task);
                                             return [2 /*return*/, task];
                                     }
                                 });
                             }); }))];
-                    case 5:
+                    case 4:
                         createdTodos = _a.sent();
-                        // console.log('End of the todo service');
-                        return [2 /*return*/, { list: list, todos: createdTodos }];
-                    case 6:
-                        error_2 = _a.sent();
-                        // console.error('An error occurred:', error);
-                        throw error_2;
-                    case 7: return [2 /*return*/];
+                        return [2 /*return*/, { todos: createdTodos }];
+                    case 5:
+                        error_3 = _a.sent();
+                        console.error('An error occurred:', error_3);
+                        throw error_3;
+                    case 6: return [2 /*return*/];
                 }
             });
         });
