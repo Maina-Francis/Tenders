@@ -15,4 +15,6 @@ export const keywords: string[] = [
   'biometric',
   'data',
   'ict',
+  'eboard',
+  'e-board',
 ];

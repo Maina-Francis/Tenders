@@ -21,7 +21,7 @@ export class TenderService {
   @Cron('0 0 6 * * *') //runs every day @6am
   async getTenders(): Promise<string> {
     // Delete everything in the newTenders collection
-    // await this.newTenderModel.deleteMany({});
+    await this.newTenderModel.deleteMany({});
 
     // Fetch data from the GOK tender api
     const url = 'https://tenders.go.ke/api/TenderDisplay/OpenTenders/Open/';
