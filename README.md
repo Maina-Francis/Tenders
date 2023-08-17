@@ -1,73 +1,67 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Government Tender Notifier - GitHub Repository
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the Government Tender Notifier project repository. This project is designed to help you stay up-to-date with relevant government tenders posted by the Kenyan government. It utilizes a combination of technologies to fetch, filter, and notify you of new tenders that match specific keywords in the IT sector.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Technologies Used
 
-## Description
+- **Backend Framework:** NestJS
+- **Database:** MongoDB
+- **External API:** Microsoft Graph API
+- **Scheduling:** Cron Job
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## System Overview
 
-## Installation
+The Government Tender Notifier system offers an efficient way to monitor government tenders and receive notifications for those related to the IT sector. Here's how the system works:
 
-```bash
-$ npm install
-```
+1. **Data Collection:** The system queries the tenders posted by the Kenyan government.
+2. **Keyword Filtering:** The fetched tenders are filtered based on specific keywords related to the IT space. This ensures that only relevant tenders are considered.
+3. **Data Storage:** The filtered tenders are stored in the MongoDB database for future reference and analysis.
+4. **Notification:** Tenders that match the predefined keywords are then sent as tasks to your Microsoft To-Do app.
+5. **Scheduling:** A cron job is set up to run at specific times during the day. This ensures that the system periodically checks for new tenders and sends notifications for any matches.
 
-## Running the app
+## Installation and Setup
 
-```bash
-# development
-$ npm run start
+To run the Government Tender Notifier project on your local machine, follow these steps:
 
-# watch mode
-$ npm run start:dev
+1. Clone the repository:
 
-# production mode
-$ npm run start:prod
-```
+   ```
+     git clone git@github.com:Maina-Francis/tender-filter-script.git
+   ```
+ 
+3. Install dependencies:
+   ```
+     npm install
+   ```
 
-## Test
+5. Configure your environment variables:
+- Create a `.env` file based on the provided `.env.example` template.
+- Add your Microsoft Graph API credentials and MongoDB connection URI.
 
-```bash
-# unit tests
-$ npm run test
+4. Start the application:
+   ```
+     npm run start:dev
+   ```
 
-# e2e tests
-$ npm run test:e2e
+   
+## Contributing
 
-# test coverage
-$ npm run test:cov
-```
+If you'd like to contribute to the project, feel free to submit pull requests. Contributions in the form of bug fixes, enhancements, or new features are always welcome.
 
-## Support
+## Future Improvements
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+The Government Tender Notifier project is designed to evolve. Some potential future improvements include:
 
-## Stay in touch
+- Adding user authentication for personalized notifications.
+- Introducing a user-friendly web interface for configuration and monitoring.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Copyright
 
-## License
+&copy; Francis Maina
 
-Nest is [MIT licensed](LICENSE).
+---
+
+Thank you for your interest in the Government Tender Notifier project. If you have any questions or suggestions, please feel free to reach out to me. We hope this project proves to be a valuable asset for staying informed about government tenders in the IT sector.
+
+
+
